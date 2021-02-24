@@ -45,7 +45,7 @@ using namespace colmap;
 
 namespace py = pybind11;
 
-RANSAC<GP3PEstimator>::Report generalized_absolute_pose_estimation(
+py::dict generalized_absolute_pose_estimation(
     const std::vector<Eigen::Vector2d> points2D,
     const std::vector<Eigen::Vector3d> points3D,
     const std::vector<Eigen::Matrix3x4d> camera_extrinsic,
@@ -77,6 +77,11 @@ RANSAC<GP3PEstimator>::Report generalized_absolute_pose_estimation(
   RANSAC<GP3PEstimator> ransac(options);
 
   // TODO Absolute pose refinement
-
-  return ransac.Estimate(pts2d, points3D);
+  py::dict success_dict;
+  auto report = ransac.Estimate(pts2d, points3D);
+  success_dict["model"] = report.model;
+  success_dict["success"] = report.success;
+  success_dict["num_trials"] = report.num_trials;
+  success_dict["inlier_mask"] = report.inlier_mask;
+  return success_dict;
 }
