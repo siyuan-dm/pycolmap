@@ -3,6 +3,7 @@
 namespace py = pybind11;
 
 #include "absolute_pose.cc"
+#include "generalized_absolute_pose.cc"
 #include "essential_matrix.cc"
 #include "fundamental_matrix.cc"
 #include "transformations.cc"
@@ -17,6 +18,18 @@ PYBIND11_MODULE(pycolmap, m) {
           py::arg("camera_dict"),
           py::arg("max_error_px") = 12.0,
           "Absolute pose estimation with non-linear refinement.");
+
+    // Absolute pose.
+    m.def("generalized_absolute_pose_estimation", &generalized_absolute_pose_estimation,
+          py::arg("points2D"), py::arg("points3D"),
+          py::arg("camera_extrinsic"),
+          py::arg("max_error") = 1e-5,
+          py::arg("min_inlier_ratio") = 0.1,
+          py::arg("confidence") = 0.99,
+          py::arg("dyn_num_trials_multiplier") = 3.0,
+          py::arg("min_num_trials") = 0,
+          py::arg("max_num_trials") = std::numeric_limits<size_t>::max(),
+          "Generalized absolute pose estimation with non-linear refinement.");
 
     // Essential matrix.
     m.def("essential_matrix_estimation", &essential_matrix_estimation,
